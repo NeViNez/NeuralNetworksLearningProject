@@ -1,5 +1,6 @@
 import PythonBasics
 import binaryClassNN
+import numpyBasics
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -16,3 +17,12 @@ if __name__ == '__main__':
 
     print("Task 2.")
     binaryClassNN.neuralNetwork()
+
+    print("Task 3.")
+    canvas = numpyBasics.circle(4, 3, 4, 7)
+    with open('out_2.3.6.txt', 'w') as f:
+        for x in canvas:
+            for y in x:
+                print(y, end='', file=f)
+            print("\n", file=f)
+    f.close()
