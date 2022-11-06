@@ -8,7 +8,7 @@ import math
 
 def circle(radius, r, g, b):
     radius = int(radius)
-    SIZE = 2 * radius + 1 + 2;
+    SIZE = 2 * radius + 1 + 2
 
     canvas = np.zeros((SIZE, SIZE, 3), dtype=int)
 
