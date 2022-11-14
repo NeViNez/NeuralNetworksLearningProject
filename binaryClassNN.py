@@ -1,9 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as mclr
-import tensorflow as tf
-from tensorflow.keras import layers
-from tensorflow.keras import models
+import keras
 
 def neuralNetwork():
     def genData(size=500):
@@ -33,15 +31,15 @@ def neuralNetwork():
     (train_data, train_label), (test_data, test_label) = genData()
 
     # NN structure
-    model = tf.keras.models.Sequential([
-        tf.keras.layers.Dense (32),
-        tf.keras.layers.Dense(128, activation='relu'),
-        tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.Dense(2)
+    model = keras.models.Sequential([
+        keras.layers.Dense (32),
+        keras.layers.Dense(128, activation='relu'),
+        keras.layers.Dropout(0.2),
+        keras.layers.Dense(2)
     ])
 
     # Loss function definition
-    loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+    loss_fn = keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 
     # Adjusting learning rates. Defining optimization algorithms and metrics
     model.compile(optimizer='adam',
