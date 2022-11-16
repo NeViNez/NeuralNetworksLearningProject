@@ -40,6 +40,8 @@ if __name__ == '__main__':
     sine_dataset_path = os.getcwd() + "/5_1_dataset_sine.csv"
     linear_dataset_path = os.getcwd() + "/5_1_dataset_linear.csv"
     repeats = 10000
-    regression.dataset_generation(sine_dataset_path, regression.sine_function, repeats=repeats)
-    regression.dataset_generation(linear_dataset_path, regression.linear_function, repeats=repeats)
+    generate_dataset = False
+    if generate_dataset:
+        regression.dataset_generation(sine_dataset_path, regression.sine_function, repeats=repeats)
+        regression.dataset_generation(linear_dataset_path, regression.linear_function, repeats=repeats)
     regression.linear_regression_fit(linear_dataset_path, repeats)
