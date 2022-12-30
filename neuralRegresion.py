@@ -23,44 +23,45 @@ def dataset_generation(dataset_path, function, repeats=30000):
 def linear_regression_fit(linear_dataset_path, repeats):
     df = pd.read_csv(linear_dataset_path)   # Чтение сгенерированного датасета
     x_list = np.arange(3.0, 10.0, 0.01)     # Делаем начальный список с training labels
-    # Зачем делаем датафрейм?
-    x_df = pd.DataFrame(x_list).T           # Транспоз, чтобы ты заплакала
-    # Этот метод работает медленно. И вообще идея с отдельным созданием меток не нравится, все должно быть в
-    # датасете изначально
+    x_df = pd.DataFrame(x_list).T
     for i in range(repeats - 1):
         temp = pd.DataFrame(np.arange(3.0, 10.0, 0.01)).T
         x_df = pd.concat([x_df, temp])
 
     print(x_df)
 
-    # Нормализация для ленивых. Этот слой нужен только чтобы работало, я пытался сделать нормалайз сам, но не завелось
     normalizer = tf.keras.layers.Normalization(axis=-1)
     normalizer.adapt(x_df)
 
-    # Смысл в том, что его здесь нет. Почему один нейрон? Потому что так было в руководстве...
-    # Поидее это потому что регрессия линейная и x -> y, но кто бы это знал...
-    regr_model = tf.keras.Sequential([
-        normalizer,
-        tf.keras.layers.Dense(1)
-    ])
-    regr_model.build()
+    main_input = tf.keras.layers.Input(shape=(700,), dtype="float32", name="main_input")
+    # Слой кодирования
+    coder_output = tf.keras.layers.Dense(8, activation="relu", name="coder_output")(main_input)
+    layer = tf.keras.layers.Dense(16, activation="relu")(coder_output)
+    layer = tf.keras.layers.Dense(4, activation="relu")(layer)
+
+    layer = tf.keras.layers.Dense(16, activation="relu")(coder_output)
+    layer = tf.keras.layers.Dense(1, activation="relu")(layer)
+    # Выход декодера
+    decoder_output = tf.keras.layers.Dense(1, activation="sigmoid", name="decoder_output")(layer)
+    # Выход регрессии
+    regression_output = tf.keras.layers.Dense(1, name="regression_output")(layer)
+
+    regr_model = tf.keras.Model(inputs=[main_input], outputs=[regression_output, decoder_output])
     regr_model.summary()
     regr_model.compile(
         optimizer=tf.optimizers.Adam(learning_rate=0.1),
         loss='mean_absolute_error')
 
-    # Да оно не должно работать... почему работает???
     history = regr_model.fit(
         x_df,
         np.array(df),
         epochs=70,
         # Suppress logging.
         verbose=0,
-        # Calculate validation results on 20% of the training data.
+        # Calculate validation results on 10% of the training data.
         validation_split=0.1)
 
-    # Еще и графики какие-то красивые рисует, жесть...
-    print("Abobus complete")
+    print("Training complete")
     hist = pd.DataFrame(history.history)
     hist['epoch'] = history.epoch
     print(hist.tail())
