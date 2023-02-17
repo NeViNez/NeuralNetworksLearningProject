@@ -65,7 +65,8 @@ def linear_regression_fit(linear_dataset_path, repeats):
     hist = pd.DataFrame(history.history)
     hist['epoch'] = history.epoch
     print(hist.tail())
-    a = px.line(hist)
+    a = px.line(hist, labels={"index": "epoch",
+                  "value": "training loss"})
     a.show()
 
 
